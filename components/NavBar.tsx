@@ -10,21 +10,34 @@ import {
   motion,
   useAnimation,
   useMotionValueEvent,
-  useScroll
+  useScroll,
+  useSpring
 } from "framer-motion";
 
 const scrollAnimationVariants = {
   top: {
-    backgroundColor: "rgba(255, 255, 255, 1)"
+    backgroundColor: "rgba(255, 255, 255, 1)",
+    transition: {
+      duration: 0.5
+    }
   },
   darkTop: {
-    backgroundColor: "rgba(17, 17, 17, 1)"
+    backgroundColor: "rgba(17, 17, 17, 1)",
+    transition: {
+      duration: 0.5
+    }
   },
   scroll: {
-    backgroundColor: "rgb(255, 255, 255, 1)"
+    backgroundColor: "rgb(255, 255, 255, 1)",
+    transition: {
+      duration: 0.5
+    }
   },
   darkScroll: {
-    backgroundColor: "rgba(17, 17, 17, 1)"
+    backgroundColor: "rgba(17, 17, 17, 1)",
+    transition: {
+      duration: 0.5
+    }
   }
 };
 
@@ -75,7 +88,7 @@ const NavBar = () => {
    *   - useScroll 을 사용할 것
    *************************************************************************************************/
   const navAnimation = useAnimation();
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   useMotionValueEvent(scrollY, "change", (latest) => {
     // console.log("scrollY: " + latest);
     // console.log("theme: " + theme);
@@ -93,13 +106,28 @@ const NavBar = () => {
       }
     }
   });
+
+  /*************************************************************************************************
+   * 스크롤 이벤트 2
+   *
+   * - 스크롤 할때 진행률을 상단에 표시한다
+   *************************************************************************************************/
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
   return (
     <>
+      <motion.div
+        className="fixed h-2.5 bg-red-600 origin-[0%] top-0 inset-x-0 z-10"
+        style={{ scaleX }}
+      ></motion.div>
       <motion.nav
         variants={scrollAnimationVariants}
         animate={navAnimation}
         initial={theme === "light" ? "top" : "darkTop"}
-        className="sticky top-0 mx-auto max-w-2xl flex justify-center items-center gap-x-20 mt-10"
+        className="sticky top-0 mx-auto max-w-2xl flex justify-center items-center gap-x-20 pt-4"
       >
         {/* 로고 */}
         <Link href={"/"}>
